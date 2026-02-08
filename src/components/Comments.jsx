@@ -1,51 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-
-const schema = yup.object({
-  firstName: yup
-    .string()
-    .required()
-    .max(100, 'Maximum 100 characters'),
-
-  lastName: yup
-    .string()
-    .required('Last name is required')
-    .max(100, 'Maximum 100 characters'),
-
-  email: yup
-    .string()
-    .email('Invalid email format')
-    .required('Email is required'),
-
-  mobile: yup
-    .string()
-    .required('Mobile number is required')
-    .min(6, 'Minimum 6 digits')
-    .max(12, 'Maximum 12 digits'),
-  
-
-  title: yup
-    .string()
-    .required('Title is required'),
-
-  developer: yup
-    .string()
-    .required('Please select an option'),
-
-  password: yup
-    .string()
-    .required('Password is required')
-    .min(10, 'Minimum 10 characters'),
-
-  acceptTerms: yup
-    .boolean()
-    .oneOf([true], 'You must accept terms'),
-});
+import CommonInput from './CommonInput/Index';
+import schema from './scheme/index';
 
 export default function App() {
-
+const [view,setView]=useState(true)
+const handele=()=>{
+  setView(!view)
+}
   const {
     register,
     handleSubmit,
@@ -54,47 +17,49 @@ export default function App() {
   } = useForm({
     resolver: yupResolver(schema)
   });
-
+useEffect(()=>{ alert("clicked")},[])
   const onSubmit = (data) => {
     console.log('Form Data:', data);
     alert('Form submitted successfully!');
     reset();
   };
-  const onErr = (errors) => console.log(errors);
+
+const onErr = (errors) => console.log(errors);
 
   return (
     <form onSubmit={handleSubmit(onSubmit,onErr)} className="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg space-y-5">
-      <input
+      {/* <input
         type="text"
         placeholder="First name"
         {...register("firstName")}
         className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <p className="text-sm text-red-500 mt-1">{errors.firstName?.message}</p>
+      /> */}
+    {/* <p className="text-sm text-red-500 mt-1">{errors.firstName?.message}</p> */}
+      <CommonInput type="text"
+      lable={"First Name"}
+        placeholder="First name" name="firstName" errors= {errors.firstName} register={register}/>
 
-      <input
+      <CommonInput
         type="text"
+        lable={"Last Name"}
         placeholder="Last name"
-        {...register("lastName")}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        name={"lastName"}
+        errors= {errors.lastName} register={register}
       />
-      <p className="text-sm text-red-500 mt-1">{errors.lastName?.message}</p>
-
-      <input
+      <CommonInput
         type="text"
+        lable={"Email"}
         placeholder="Email"
-        {...register("email")}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        name={"email"}
+        errors= {errors.email} register={register}
       />
-      <p className="text-sm text-red-500 mt-1">{errors.email?.message}</p>
-
-      <input
+     <CommonInput
         type="tel"
+        lable={"Mobile"}
         placeholder="Mobile number"
-        {...register("mobile")}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <p className="text-sm text-red-500 mt-1">{errors.mobile?.message}</p>
+        name={"mobile"}
+        errors= {errors.mobile} register={register}
+     />
 
       <select {...register("title")}
       className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -159,15 +124,16 @@ export default function App() {
     <p className="text-sm text-red-500 mt-1">
       {errors.acceptTerms?.message}
     </p>
+   
   </div>
-      <input
-        type="password"
+      <CommonInput
+        type={view?"text":"password"}
+        lable={"Password"}
         placeholder="Password"
-        {...register("password")}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        name={"password"}
+        errors= {errors.password} register={register}
       />
-      <p className="text-sm text-red-500 mt-1">{errors.password?.message}</p>
-
+       <button onClick={handele}>{!view?"show":"hide"}</button>
       <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-200">Submit</button>
     </form>
   );
